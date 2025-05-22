@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
       });
       if (res.ok) {
         const data = await res.json();
-        // console.log(data);
+        console.log(data);
         setUser(data);
         setIsLogged(true);
       } else {
@@ -22,6 +22,7 @@ export const AuthProvider = ({ children }) => {
         setIsLogged(false);
       }
     } catch (err) {
+      console.log(err);
       setUser(null);
     }
   };
