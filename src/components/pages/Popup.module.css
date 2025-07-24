@@ -1,14 +1,15 @@
 .popup {
   /* display: none; */
   position: fixed;
-  z-index: 20;
   background-color: white;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   height: 500px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  /* padding: 10px 0 40px 0; */
+  z-index: 1000;
+  padding: 10px;
+  border-radius: 8px;
 }
 
 .popup .infor {
@@ -22,11 +23,24 @@
 
 .description {
   font-style: italic;
+  flex-grow: 1;
 }
 
 .description .icon {
   text-align: end;
   cursor: pointer;
+  position: fixed;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  background-color: red;
+  color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  line-height: 50px;
+  text-align: center;
 }
 
 .description .name {
@@ -53,4 +67,14 @@
   background-color: var(--color-gray-800);
   border: 0;
   padding: 5px 20px;
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }

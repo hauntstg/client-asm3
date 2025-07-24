@@ -19,7 +19,7 @@ export default function Popup({ data, isOpen, onClose }) {
     navigate("/detail/" + data._id);
   }
   return createPortal(
-    <div className="row justify-content-center">
+    <div className={`${classes.backdrop} row justify-content-center`}>
       <div className={classes.popup + " col-7"}>
         <div className={classes.infor}>
           {data && (
@@ -33,8 +33,8 @@ export default function Popup({ data, isOpen, onClose }) {
             />
           )}
           <div className={classes.description}>
-            <div className={classes.icon}>
-              <i className="fa fa-times" onClick={closePopup}></i>
+            <div className={classes.icon} onClick={closePopup}>
+              <i className="fa fa-times"></i>
             </div>
             {data && <p className={classes.name}>{data.name}</p>}
             {data && (

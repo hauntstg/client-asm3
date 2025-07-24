@@ -132,3 +132,8 @@
   color: var(--color-gray-500);
   margin-top: 5px;
 }
+
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

@@ -1,7 +1,7 @@
 const REST_API = process.env.REACT_APP_API;
 export async function fetchProducts() {
   try {
-    const res = await fetch(`${REST_API}/products`);
+    const res = await fetch(`${REST_API}/product-list`);
     const data = await res.json();
     return data;
   } catch (error) {

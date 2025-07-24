@@ -20,46 +20,80 @@ function ShopCategory() {
   const [focusCategory, setFocusCategory] = useState(categoryProduct);
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState({});
+  const [countPages, setCountPages] = useState(1);
+  const [loading, setLoading] = useState(true);
   let productsUpdate = [];
-
   // mỗi lần component này render key sẽ tăng lên 1 - element img sẽ bị xóa và tạo lại
   keyAutoIncrease++;
 
-  const fetchProducts = async (category, name) => {
+  const fetchProducts = async (category, name, page) => {
+    setLoading(true);
     try {
       const query = {};
       if (category) query.category = category;
       if (name) query.name = name;
+      if (page) query.page = page || 1;
 
       const queryString = new URLSearchParams(query).toString();
+      // console.log("cate ne " + categoryProduct, "query " + queryString);
       const res = await fetch(`${REST_API}/products?${queryString}`);
       const resData = await res.json();
-      setData(resData);
+      setData(resData.products);
+      setPagination(resData.pagination);
+      setLoading(false);
     } catch (err) {
       console.error("Fetch products failed:", err);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
+    fetchProducts(categoryProduct, search, countPages);
+  }, [search, countPages]);
+
+  useEffect(() => {
+    if (searchRef.current) {
+      searchRef.current.value = "";
+    }
     setSearch("");
-  }, [focusCategory]);
-
-  useEffect(() => {
-    setFocusCategory(categoryProduct);
-    fetchProducts(categoryProduct, search);
-  }, [categoryProduct, search]);
-
-  // reset page khi param thay đổi
-  useEffect(() => {
-    setOption("0");
-    searchRef.current.value = "";
+    setCountPages(1);
+    fetchProducts(categoryProduct, "", 1);
   }, [categoryProduct]);
+
+  // useEffect(() => {
+  //   setSearch("");
+
+  // }, [categoryProduct]);
+
+  // start
+  // useEffect(() => {
+  //   // console.log(
+  //   //   "category=" + categoryProduct,
+  //   //   "name=" + search,
+  //   //   "page=" + countPages
+  //   // );
+  //   setFocusCategory(categoryProduct);
+  //   fetchProducts(categoryProduct, search, countPages);
+  // }, [categoryProduct, search, countPages]);
+
+  // // reset page khi param thay đổi
+  // useEffect(() => {
+  //   setOption("0");
+  //   searchRef.current.value = "";
+  //   setCountPages(1);
+  //   fetchProducts(categoryProduct, search, 1);
+  // }, [categoryProduct]);
+  //end
 
   function searchHandle(e) {
     const search = e.target.value;
+    setCountPages(1);
     setSearch(search);
     fetchProducts(categoryProduct, search);
   }
+
+  if (loading) return null; // hoặc spinner
 
   return (
     <div className={"col-10"}>
@@ -80,7 +114,7 @@ function ShopCategory() {
               }}
             />
           </div>
-          <div className="col-2">
+          <div className="col-2" style={{ display: "none" }}>
             <select defaultValue={option}>
               <option value="0">Default sorting</option>
               <option value="1">Sort descending</option>
@@ -90,7 +124,7 @@ function ShopCategory() {
         <div className={classes.bottom + " row"}>
           <div className="col-3">
             <div className={classes.menu}>
-              <p className={classes.apple}>APPLE</p>
+              <p className={classes.apple}>PRODUCTS</p>
               <NavLink
                 className={({ isActive }) =>
                   isActive ? classes.active : undefined
@@ -101,7 +135,7 @@ function ShopCategory() {
               >
                 All
               </NavLink>
-              <p className={classes.iphonemac}>IPHONE & MAC</p>
+              <p className={classes.iphonemac}>SMARTPHONE & IPAD</p>
               <NavLink
                 className={({ isActive }) =>
                   isActive ? classes.active : undefined
@@ -115,18 +149,45 @@ function ShopCategory() {
                 className={({ isActive }) =>
                   isActive ? classes.active : undefined
                 }
-                to="ipad"
+                to="oppo"
               >
-                Ipad
+                Oppo
               </NavLink>{" "}
               <br />
               <NavLink
                 className={({ isActive }) =>
                   isActive ? classes.active : undefined
                 }
-                to="macbook"
+                to="realme"
               >
-                Macbook
+                Realme
+              </NavLink>{" "}
+              <br />
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? classes.active : undefined
+                }
+                to="vivo"
+              >
+                Vivo
+              </NavLink>{" "}
+              <br />
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? classes.active : undefined
+                }
+                to="samsung"
+              >
+                Samsung
+              </NavLink>{" "}
+              <br />
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? classes.active : undefined
+                }
+                to="ipad"
+              >
+                Ipad
               </NavLink>{" "}
               <br />
               <p className={classes.wireless}>WIRELESS</p>
@@ -149,6 +210,15 @@ function ShopCategory() {
               </NavLink>{" "}
               <br />
               <p className={classes.other}>OTHER</p>
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? classes.active : undefined
+                }
+                to="laptop"
+              >
+                Laptop
+              </NavLink>{" "}
+              <br />
               <NavLink
                 className={({ isActive }) =>
                   isActive ? classes.active : undefined
@@ -202,18 +272,31 @@ function ShopCategory() {
             </div>
             <div className={classes.pagination}>
               <div className={classes["wrap-icon"]}>
-                <i className="fa fa-angle-double-left" aria-hidden="true"></i>
+                <i
+                  className={`${
+                    countPages === 1 ? classes.disabled : ""
+                  } fa fa-angle-double-left`}
+                  aria-hidden="true"
+                  onClick={() => setCountPages((prev) => Math.max(prev - 1, 1))}
+                ></i>
                 <span
                   className={
                     data.length ? classes["span-in"] : classes["hidden"]
                   }
                 >
-                  1
+                  {countPages}
                 </span>
-                <i className="fa fa-angle-double-right" aria-hidden="true"></i>
+                <i
+                  className={`${
+                    countPages === pagination.totalPages ? classes.disabled : ""
+                  } fa fa-angle-double-right`}
+                  aria-hidden="true"
+                  onClick={() => setCountPages((prev) => prev + 1)}
+                />
               </div>
               <span>
-                Showing 1-9 of {productsUpdate.length ? 9 : 0} results
+                Showing {pagination.fromIndex}-{pagination.toIndex} of{" "}
+                {pagination.totalItems} results
               </span>
             </div>
           </div>

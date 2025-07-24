@@ -12,7 +12,7 @@ function TrendingProducts() {
   useEffect(() => {
     const fetchAPI = async () => {
       const data = await fetchProducts();
-      setProducts(data);
+      setProducts(data.slice(0, 12));
     };
     fetchAPI();
   }, []);
