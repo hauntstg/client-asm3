@@ -57,10 +57,12 @@ function LiveChatPopup() {
   useEffect(() => {}, [messages]);
 
   const sendMessage = () => {
+    console.log("sendMessage", input);
     if (!roomId) return alert("Bạn cần đăng nhập để thực hiện chức năng này!");
     if (input.trim() === "/end") {
       dispatch(showPopupLiveChatActions.showPopupLiveChat());
     } else if (input.trim() !== "") {
+      console.log("Sending emit message event:", input);
       socket.emit("message", { roomId, message: input, sender: "user" });
       setInput("");
     }
